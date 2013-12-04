@@ -1,0 +1,3 @@
+[submodule "testmore"]
+	path = testmore
+	url = git@github.com:shiflett/testmore.git

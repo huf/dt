@@ -3,8 +3,8 @@
 // TODO:
 // tests, especially around fucking dst and leap seconds and such
 // determine the time range this shit works on
-// timezone handling?
 // comparison stuff?
+// +/- on dates?
 
 class dt {
 	public 
@@ -104,25 +104,4 @@ class dt {
 		return self::mktime($this);
 	}
 }
-
-// AAAA no datetime it doesnt have a sane mktime, i cant add 30 days to something
-// gaaaaaaaa
-// so how to make strptime work with tzs what is this aaa
-// or who *is* the culprit here? ew.
-// de ez mekkora szar hogy strptime nem tud idozonakrol....
-//j$x = dt::strptime('%Y-%m-%d %H:%M', '2003-07-01 02:23');
-//var_dump($x);
-//$x = dt::convert_tz($x, 'America/New_York');
-//
-//$x->tz('America/New_York');
-//$x->tz('Europe/Budapest');
-//$x->mday += 900;
-//var_dump($x);
-//echo dt::strftime('%Y-%m-%d %H:%M %Z %z', $x), "\n";
-
-$x = dt::strptime('%Y-%m-%d', '2013-11-30');
-$x->mday = 0;
-$x->mon += 4;
-echo dt::strftime('%Y-%m-%d %H:%M %Z %z', $x), "\n";
-
 
