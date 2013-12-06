@@ -5,29 +5,50 @@
 // determine the time range this shit works on
 // comparison stuff?
 // +/- on dates?
+// exceptions? (bad __construct call, bad strptime call)
 
 class dt {
-	public 
-		$sec,
-		$min,
+	const VERSION = '1.0';
+
+	public
+		$second,
+		$minute,
 		$hour,
-		$mday,
-		$mon,
+		$day,
+		$month,
 		$year,
 		$wday,
 		$yday,
 		$tz;
 
-	private function __construct($vals, $tz) {
-		$this->sec = $vals[0];
-		$this->min = $vals[1];
-		$this->hour = $vals[2];
-		$this->mday = $vals[3];
-		$this->mon = 1 + $vals[4];
-		$this->year = 1900 + $vals[5];
-		$this->wday = $vals[6];
-		$this->yday = $vals[7];
-		$this->tz = isset($tz) ? $tz : date_default_timezone_get();
+	public function __construct($params, $_vals = null, $_tz = null) {
+		if ($params === null
+			&& $_vals
+			&& is_array($_vals)) // tz is optional
+		{
+			// internal call
+			$this->second = $_vals[0];
+			$this->minute = $_vals[1];
+			$this->hour = $_vals[2];
+			$this->day = $_vals[3];
+			$this->month = 1 + $_vals[4];
+			$this->year = 1900 + $_vals[5];
+			$this->wday = $_vals[6];
+			$this->yday = $_vals[7];
+			$this->tz = isset($_tz) ? $_tz : date_default_timezone_get();
+		}
+		else {
+			// nice external call
+			$this->second = isset($params['second']) ? $params['second'] : 0;
+			$this->minute = isset($params['minute']) ? $params['minute'] : 0;
+			$this->hour = isset($params['hour']) ? $params['hour'] : 0;
+			$this->day = isset($params['day']) ? $params['day'] : 1;
+			$this->month = isset($params['month']) ? $params['month'] : 1;
+			$this->year = isset($params['year']) ? $params['year'] : 1970;
+			$this->tz = isset($params['tz']) ? $params['tz'] : date_default_timezone_get();
+
+			$this->recalc(); // to get wday and yday
+		}
 	}
 
 	private static function _set_tz($tz = null) {
@@ -60,7 +81,7 @@ class dt {
 		if ($l === false) {
 			return false;
 		}
-		return new self(array_values($l), $tz);
+		return new self(null, array_values($l), $tz);
 	}
 
 	public static function mktime($dt = null) {
@@ -69,8 +90,8 @@ class dt {
 		}
 
 		self::_set_tz($dt->tz);
-		$ts = mktime($dt->hour, $dt->min, $dt->sec,
-			$dt->mon, $dt->mday, $dt->year,
+		$ts = mktime($dt->hour, $dt->minute, $dt->second,
+			$dt->month, $dt->day, $dt->year,
 			-1);
 		self::_set_tz();
 		return $ts;
@@ -81,7 +102,7 @@ class dt {
 			$ts = time();
 		}
 		$tz && self::_set_tz($tz);
-		$dt = new self(localtime($ts), $tz);
+		$dt = new self(null, localtime($ts), $tz);
 		$tz && self::_set_tz();
 		return $dt;
 	}
@@ -102,6 +123,13 @@ class dt {
 
 	public function ts() {
 		return self::mktime($this);
+	}
+
+	public function recalc() {
+		$dt = self::localtime(self::mktime($this), $this->tz);
+		foreach ($dt as $k => $v) {
+			$this->$k = $v;
+		}
 	}
 }
 
