@@ -76,24 +76,18 @@ is( $dt->year,  1904, 'year should be 1904' );
 is( $dt->month, 1,    'month should be 1904' );
 is( $dt->day,   1,    'day should be 1904' );
 
-/*
+foreach (array(
+	array( 1   , -62135596800 ),
+	array( 99  , -59042995200 ),
+	array( 100 , -59011459200 ),
+	array( 999 , -30641760000 ),
+) as $pair)
 {
-    for my $pair (
-        [ 1   => -62135596800 ],
-        [ 99  => -59042995200 ],
-        [ 100 => -59011459200 ],
-        [ 999 => -30641760000 ],
-        ) {
-
-        my ( $year, $epoch ) = @{$pair};
-
-        is(
-            DateTime->new( year => $year )->epoch, $epoch,
-            "epoch for $year is $epoch"
-        );
-    }
+	list ( $year, $epoch ) = $pair;
+	is( (new dt(array('year' => $year)))->ts(), $epoch, "epoch for $year is $epoch");
 }
 
+/*
 {
 
     package Number::Overloaded;
