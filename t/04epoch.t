@@ -63,6 +63,7 @@ is( $epochtest->hour, 1,  "hour" );
 is( $epochtest->minute,  30, "minute" );
 
 $epochtest->hour += 2;
+$epochtest->recalc();
 $expected += 2 * 60 * 60;
 
 is( $epochtest->hour, 3, "adjusted hour" );
