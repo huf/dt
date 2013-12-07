@@ -21,7 +21,7 @@ class dt {
 		$yday,
 		$tz;
 
-	public function __construct($params, $_vals = null, $_tz = null) {
+	public function __construct($params = array(), $_vals = null, $_tz = null) {
 		if ($params === null
 			&& $_vals
 			&& is_array($_vals)) // tz is optional
