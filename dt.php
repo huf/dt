@@ -114,9 +114,7 @@ class dt {
 	public function tz($tz = null) {
 		$ptz = $this->tz;
 		if ($tz !== null && $tz !== $ptz) {
-			foreach (self::convert_tz($this, $tz) as $k => $v) {
-				$this->$k = $v;
-			}
+			$this->_clobber(self::convert_tz($this, $tz));
 		}
 		return $ptz;
 	}
@@ -127,9 +125,28 @@ class dt {
 
 	public function recalc() {
 		$dt = self::localtime(self::mktime($this), $this->tz);
+		$this->_clobber($dt);
+	}
+
+	private function _clobber($dt) {
 		foreach ($dt as $k => $v) {
 			$this->$k = $v;
 		}
+	}
+
+	public function add($params_or_dt) {
+		foreach ($params_or_dt as $k => $v) {
+			switch ($k) {
+			case 'second':
+			case 'minute':
+			case 'hour':
+			case 'day':
+			case 'month':
+			case 'year':
+				$this->$k += $v;
+			}
+		}
+		$this->recalc();
 	}
 }
 
