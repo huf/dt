@@ -77,6 +77,15 @@ is( $dt->year,  1904, 'year should be 1904' );
 is( $dt->month, 1,    'month should be 1904' );
 is( $dt->day,   1,    'day should be 1904' );
 
+/* this breaks because:
+
+
+    The number of the year, may be a two or four digit value, with values between 0-69 mapping to 2000-2069 and 70-100 to 1970-2000. On systems where time_t is a 32bit signed integer, as most common today, the valid range for year is somewhere between 1901 and 2038. However, before PHP 5.1.0 this range was limited from 1970 to 2038 on some systems (e.g. Windows).
+
+
+		and ultimately the year gets passed to php's mktime() in dt.php
+	SHIT
+*/
 foreach (array(
 	array( 1   , -62135596800 ),
 	array( 99  , -59042995200 ),
